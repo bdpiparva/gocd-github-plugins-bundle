@@ -59,7 +59,7 @@ task generateBundleXML() {
     xml.doubleQuotes = true
     xml.mkp.xmlDeclaration(version: '1.0', encoding: 'utf-8')
 
-    xml."gocd-bundle"(version: "1.0") {
+    xml."gocd-bundle"(version: "1") {
       xml.plugins {
         project.gocdPlugins.forEach { plugin ->
           xml.plugin(id: plugin.id) {
