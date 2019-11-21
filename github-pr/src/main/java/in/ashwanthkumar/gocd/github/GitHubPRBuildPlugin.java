@@ -155,7 +155,7 @@ public class GitHubPRBuildPlugin implements GoPlugin {
     private GoPluginApiResponse getPluginView(Provider provider, PluginConfigurationView view) throws IOException {
         if (view.hasConfigurationView()) {
             Map<String, Object> response = new HashMap<String, Object>();
-            response.put("displayValue", provider.getName());
+            response.put("displayValue", "GitHub Pull Request");
             response.put("template", getFileContents(view.templateName()));
             return renderJSON(SUCCESS_RESPONSE_CODE, response);
         } else {

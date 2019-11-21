@@ -1,4 +1,103 @@
+import groovy.xml.MarkupBuilder
+
 apply plugin: 'java'
+
+repositories {
+  jcenter()
+  mavenCentral()
+}
+
+dependencies {
+  compile project(':github-pr')
+  compile project(':github-pr-status')
+  compile project(':github-oauth-authorization-plugin')
+}
+
+project(':github-pr').version = '1.4.0-RC2'
+project(':github-pr-status').version = '1.6-89'
+project(':github-oauth-authorization-plugin').version = '3.0.2'
+
+project.ext.gocdPlugins = [
+  [
+    id              : 'cd.go.authorization.github',
+    name            : 'GitHub OAuth authorization plugin',
+    pluginVersion   : project(':github-oauth-authorization-plugin').version,
+    gocdVersion     : '19.2.0',
+    description     : 'GitHub OAuth authorization plugin for GoCD',
+    vendorName      : 'ThoughtWorks, Inc.',
+    vendorUrl       : 'https://github.com/gocd-contrib/github-oauth-authorization-plugin',
+    extensionClasses: ["cd.go.authorization.github.GitHubPlugin"]
+  ],
+  [
+    id              : 'github.pr',
+    name            : 'Github Pull Requests Builder',
+    pluginVersion   : project(':github-pr').version,
+    gocdVersion     : '15.1.0',
+    description     : 'Plugin that polls a GitHub repository for pull requests and triggers a build for each of them',
+    vendorName      : 'Ashwanth Kumar',
+    vendorUrl       : 'https://github.com/ashwanthkumar/gocd-build-github-pull-requests',
+    extensionClasses: ["in.ashwanthkumar.gocd.github.GitHubPRBuildPlugin"]
+  ],
+  [
+    id              : 'github.pr.status',
+    name            : 'Github Pull Requests status notifier',
+    pluginVersion   : project(':github-pr-status').version,
+    gocdVersion     : '17.3.0',
+    description     : 'Updates build status for GitHub pull request',
+    vendorName      : 'GoCD Contributors',
+    vendorUrl       : 'https://github.com/gocd-contrib/gocd-build-status-notifier',
+    extensionClasses: ["com.tw.go.plugin.GitHubBuildStatusNotifierPlugin"]
+  ]
+]
+
+task generateBundleXML() {
+  def bundleXmlFile = file("gocd-bundle.xml")
+  outputs.file(bundleXmlFile)
+
+  bundleXmlFile.withWriter { writer ->
+    def xml = new MarkupBuilder(new IndentPrinter(writer, "    ", true))
+    xml.doubleQuotes = true
+    xml.mkp.xmlDeclaration(version: '1.0', encoding: 'utf-8')
+
+    xml."gocd-bundle"(version: "1.0") {
+      xml.plugins {
+        project.gocdPlugins.forEach { plugin ->
+          xml.plugin(id: plugin.id) {
+            xml.about {
+              xml.name(plugin.name)
+              xml.version(plugin.pluginVersion)
+              xml.description(plugin.description)
+              xml."target-go-version"(plugin.gocdVersion)
+              xml.vendor {
+                name(plugin.vendorName)
+                url(plugin.vendorUrl)
+              }
+            }
+            xml.extensions {
+              plugin.extensionClasses.each { clazz ->
+                xml.extension(class: clazz)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+jar {
+  from(generateBundleXML.outputs) {
+    into "/"
+  }
+  archiveBaseName = "gocd-github-plugins-bundle"
+  from(configurations.compile) {
+    into "lib/"
+  }
+
+  from(sourceSets.main.java) {
+    into "/"
+  }
+}
 
 subprojects {
   apply plugin: 'java'
@@ -24,3 +123,4 @@ subprojects {
     testCompile group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '4.2.2'
   }
 }
+
