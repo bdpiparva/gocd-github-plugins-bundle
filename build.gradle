@@ -13,16 +13,14 @@ dependencies {
   compile project(':github-oauth-authorization-plugin')
 }
 
-project(':github-pr').version = '1.4.0-RC2'
-project(':github-pr-status').version = '1.6-89'
-project(':github-oauth-authorization-plugin').version = '3.0.2'
+version = '1.0.0'
 
 project.ext.gocdPlugins = [
   [
     id              : 'cd.go.authorization.github',
     name            : 'GitHub OAuth authorization plugin',
-    pluginVersion   : project(':github-oauth-authorization-plugin').version,
-    gocdVersion     : '19.2.0',
+    pluginVersion   : project.version,
+    gocdVersion     : '19.11.0',
     description     : 'GitHub OAuth authorization plugin for GoCD',
     vendorName      : 'ThoughtWorks, Inc.',
     vendorUrl       : 'https://github.com/gocd-contrib/github-oauth-authorization-plugin',
@@ -31,8 +29,8 @@ project.ext.gocdPlugins = [
   [
     id              : 'github.pr',
     name            : 'Github Pull Requests Builder',
-    pluginVersion   : project(':github-pr').version,
-    gocdVersion     : '15.1.0',
+    pluginVersion   : project.version,
+    gocdVersion     : '19.11.0',
     description     : 'Plugin that polls a GitHub repository for pull requests and triggers a build for each of them',
     vendorName      : 'Ashwanth Kumar',
     vendorUrl       : 'https://github.com/ashwanthkumar/gocd-build-github-pull-requests',
@@ -41,8 +39,8 @@ project.ext.gocdPlugins = [
   [
     id              : 'github.pr.status',
     name            : 'Github Pull Requests status notifier',
-    pluginVersion   : project(':github-pr-status').version,
-    gocdVersion     : '17.3.0',
+    pluginVersion   : project.version,
+    gocdVersion     : '19.11.0',
     description     : 'Updates build status for GitHub pull request',
     vendorName      : 'GoCD Contributors',
     vendorUrl       : 'https://github.com/gocd-contrib/gocd-build-status-notifier',
@@ -109,18 +107,25 @@ subprojects {
   }
 
   dependencies {
+    compileOnly group: 'cd.go.plugin', name: 'go-plugin-api', version: '19.10.0'
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
     compile group: 'org.kohsuke', name: 'github-api', version: '1.99'
     compile group: 'in.ashwanthkumar', name: 'git-cmd', version: '1.4'
     compile group: 'in.ashwanthkumar', name: 'my-java-utils', version: '0.0.6'
-    compile group: 'org.kohsuke', name: 'github-api', version: '1.68'
 
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.10'
+
+    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
+
+    testCompile group: 'cd.go.plugin', name: 'go-plugin-api', version: '19.10.0'
+    testCompile group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '4.2.2'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '3.0.0'
     testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.1'
     testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
     testCompile group: 'org.jsoup', name: 'jsoup', version: '1.12.1'
-    testCompile group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '4.2.2'
   }
 }
 
