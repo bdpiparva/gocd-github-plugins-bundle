@@ -1,0 +1,5 @@
+dependencies {
+  compileOnly group: 'cd.go.plugin', name: 'go-plugin-api', version: '14.4.0'
+
+  testCompile group: 'cd.go.plugin', name: 'go-plugin-api', version: '14.4.0'
+}

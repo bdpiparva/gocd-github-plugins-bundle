@@ -1,0 +1,5 @@
+rootProject.name = 'github-plugins-bundle'
+
+include ":github-pr"
+include ":github-pr-status"
+include ":github-oauth-authorization-plugin"
